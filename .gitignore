@@ -7,6 +7,6 @@ logs/*
 *.tfstate.*
  
 # tf variables file
-*.tfvars
+# *.tfvars
 # also crash.log file this will generate when crash deploy
 crash.log

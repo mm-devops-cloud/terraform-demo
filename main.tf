@@ -1,11 +1,11 @@
 
 # create a new vpc on aws 
 resource "aws_vpc" "mm-vpc" {
-  cidr_block = "100.0.0.0/16"
+  cidr_block = var.cidr_block
 
 
   tags = {
-    Name      = "mm-vpc",
+    Name      = "mm-vpc-${var.env}",
     Terraform = "True"
   }
 }
@@ -16,12 +16,12 @@ resource "aws_vpc" "mm-vpc" {
 
 resource "aws_subnet" "mm-subnet-1" {
   vpc_id                  = aws_vpc.mm-vpc.id
-  cidr_block              = "100.0.1.0/24"
+  cidr_block              = var.cidr_block-sub-1
   map_public_ip_on_launch = true
-  availability_zone       = "us-east-2a"
+  availability_zone       = var.az
 
   tags = {
-    Name      = "mm-subnet-1",
+    Name      = "mm-subnet-1-${var.env}",
     Terraform = "True"
   }
 }
@@ -39,7 +39,7 @@ resource "aws_route_table" "mm-vpc-rt" {
   }
 
   tags = {
-    Name      = "mm-vpc-rt",
+    Name      = "mm-vpc-rt-${var.env}",
     Terraform = "True"
   }
 }
@@ -52,7 +52,7 @@ resource "aws_internet_gateway" "mm-vpc-gw" {
   vpc_id = aws_vpc.mm-vpc.id
 
   tags = {
-    Name      = "mm-vpc-gw",
+    Name      = "mm-vpc-gw-${var.env}",
     Terraform = "True"
   }
 }
@@ -70,24 +70,24 @@ resource "aws_route_table_association" "mm-vpc-subnet-rt" {
 # create a new security group
 
 resource "aws_security_group" "allow_ssh_http" {
-  name        = "allow_website"
+  name        = "allow_website-${var.env}"
   description = "Allow website traffic"
   vpc_id      = aws_vpc.mm-vpc.id
 
   ingress {
-    description      = "ssh"
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
+    description = "ssh"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
-  
+
   ingress {
-    description      = "http"
-    from_port        = 80
-    to_port          = 80
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
+    description = "http"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
 
@@ -100,7 +100,7 @@ resource "aws_security_group" "allow_ssh_http" {
   }
 
   tags = {
-    Name      = "mm-vpc-sg",
+    Name      = "mm-vpc-sg-${var.env}",
     Terraform = "True"
   }
 }
@@ -110,16 +110,25 @@ resource "aws_security_group" "allow_ssh_http" {
 # create instance 
 
 resource "aws_instance" "my-server" {
-  ami = "ami-0f3c9c466bb525749"
-  instance_type = "t2.micro"
-  availability_zone = "us-east-2a"
-  key_name = "auto-key-pair"
+  ami = var.ami
+  instance_type = var.instance_type
+  availability_zone = var.az
+  key_name = var.key
   security_groups = [aws_security_group.allow_ssh_http.id]
   subnet_id = aws_subnet.mm-subnet-1.id
+  count = var.counts
+  user_data              = <<-EOF
+    #!/bin/bash
+    sudo yum update -y
+    sudo yum install httpd -y
+    sudo systemctl enable httpd
+    sudo systemctl start httpd
+    echo "<h1>Welcome to StackSimplify ! AWS Infra created using Terraform in us-east-1 Region</h1>" > /var/www/html/index.html
+    EOF
 
   tags = {
-    Name      = "mm-vpc-my-server",
+    Name      = "mm-vpc-my-server-${var.env}",
     Terraform = "True"
   }
-  
+
 }
