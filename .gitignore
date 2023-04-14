@@ -1,0 +1,12 @@
+# local terraform directory
+.terraform/*
+.history/*
+logs/*
+# tf state file 
+*.tfstate
+*.tfstate.*
+ 
+# tf variables file
+*.tfvars
+# also crash.log file this will generate when crash deploy
+crash.log
