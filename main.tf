@@ -110,14 +110,14 @@ resource "aws_security_group" "allow_ssh_http" {
 # create instance 
 
 resource "aws_instance" "my-server" {
-  ami = var.ami
-  instance_type = var.instance_type
+  ami               = var.ami
+  instance_type     = var.instance_type
   availability_zone = var.az
-  key_name = var.key
-  security_groups = [aws_security_group.allow_ssh_http.id]
-  subnet_id = aws_subnet.mm-subnet-1.id
-  count = var.counts
-  user_data              = <<-EOF
+  key_name          = var.key
+  security_groups   = [aws_security_group.allow_ssh_http.id]
+  subnet_id         = aws_subnet.mm-subnet-1.id
+  count             = var.counts
+  user_data         = <<-EOF
     #!/bin/bash
     sudo yum update -y
     sudo yum install httpd -y

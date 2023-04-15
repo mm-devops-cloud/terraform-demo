@@ -27,8 +27,8 @@ Terraform
             (
                 provider "aws" {
                     region = "us-east-2"
-                    access_key = "AKIA3YRWOJXGMZRPHKNS"
-                    secret_key = "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"
+                    access_key = "00000000000"
+                    secret_key = "+47/+lHP83FJa"
                 }
             )
             - this not recommended to use key on file configuration
