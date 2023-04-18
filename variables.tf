@@ -1,10 +1,23 @@
-variable "env" {}
-variable "cidr_block" {}
-variable "cidr_block-sub-1" {}
-variable "az" {}
-variable "key" {}
-variable "instance_type" {}
-variable "ami" {
-  default = "ami-0f3c9c466bb525749"
+# Input Variables
+variable "aws_region" {
+  description = "Region in which AWS Resources to be created"
+  type = string
+  default = "us-east-2"
 }
-variable "counts" {}
+
+## Create Variable for S3 Bucket Name
+variable "my_s3_name" {
+  description = "S3 Bucket name that we pass to S3 Custom Module"
+  type = string
+  default = "terraform-mm-devops-cloud"
+}
+
+## Create Variable for S3 Bucket Tags
+variable "my_s3_tags" {
+  description = "Tags to set on the bucket"
+  type = map(string)
+  default = {
+    Terraform = "True"
+    Name = "dev"
+  }
+}
