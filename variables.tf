@@ -1,10 +1,23 @@
-variable "env" {}
-variable "cidr_block" {}
-variable "cidr_block-sub-1" {}
-variable "az" {}
-variable "key" {}
-variable "instance_type" {}
-variable "ami" {
-  default = "ami-0f3c9c466bb525749"
+variable "path" {
+  default = "./"
+
 }
-variable "counts" {}
+
+variable "content" {
+  default = "MM"
+
+}
+
+
+variable "container_image" {
+  type    = string
+  default = "nginx:latest"
+
+}
+
+
+variable "container_count" {
+  type    = number
+  default = 3
+
+} 
